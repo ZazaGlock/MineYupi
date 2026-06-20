@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Operaciones - Staff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables y Configuración Base */
+        :root {
+            --neon-emerald: #10b981;
+            --neon-purple: #8b5cf6;
+            --neon-red: #ef4444;
+            --neon-blue: #3b82f6;
+            --bg-dark: #050505;
+            --panel-bg: rgba(15, 23, 42, 0.7);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e2e8f0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, .font-tech { font-family: 'Orbitron', sans-serif; }
+        .font-data { font-family: 'Rajdhani', sans-serif; }
+
+        /* Fondo Animado Tech */
+        .tech-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+            z-index: -1;
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-emerald); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Efectos Neón y Cristal */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glow-border-emerald { border: 1px solid rgba(16, 185, 129, 0.3); transition: 0.3s; }
+        .glow-border-emerald:hover { border-color: var(--neon-emerald); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); transform: translateY(-2px); }
+
+        .glow-border-red { border: 1px solid rgba(239, 68, 68, 0.3); transition: 0.3s; }
+        .glow-border-red:hover { border-color: var(--neon-red); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); transform: translateY(-2px); }
+
+        .text-glow { text-shadow: 0 0 10px currentColor; }
+
+        /* Pantalla de Login */
+        #login-screen {
+            position: fixed; inset: 0; z-index: 50;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .login-box {
+            background: linear-gradient(145deg, #111827, #0f172a);
+            padding: 3rem; border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.15);
+            text-align: center; width: 100%; max-width: 450px;
+            position: relative; overflow: hidden;
+        }
+
+        .login-box::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-emerald));
+            animation: scanline 2s linear infinite;
+        }
+
+        @keyframes scanline { 100% { left: 100%; } }
+
+        .pass-input {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #334155;
+            color: var(--neon-emerald); font-family: 'Orbitron', sans-serif; font-size: 1.25rem;
+            padding: 1rem; border-radius: 8px; text-align: center; outline: none;
+            transition: all 0.3s; letter-spacing: 2px;
+        }
+        .pass-input:focus { border-color: var(--neon-emerald); box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+
+        /* Navegación y Secciones */
+        .nav-btn {
+            width: 100%; display: flex; align-items: center; gap: 1rem;
+            padding: 1rem; border-radius: 8px; color: #94a3b8;
+            font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 600;
+            transition: all 0.3s; border-left: 3px solid transparent;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-btn.active {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, transparent 100%);
+            color: var(--neon-emerald); border-left-color: var(--neon-emerald);
+        }
+
+        .content-section {
+            display: none; animation: fadeIn 0.4s ease forwards;
+        }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Elementos específicos */
+        .mod-tag {
+            background: rgba(30, 41, 59, 0.8); border: 1px solid #334155;
+            padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem;
+            transition: 0.2s; cursor: default;
+        }
+        .mod-tag:hover { border-color: var(--neon-emerald); color: var(--neon-emerald); }
+
+        .table-row-hover:hover td { background: rgba(255,255,255,0.02); }
+        .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="tech-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="mb-6">
+                <i class="fa-solid fa-fingerprint text-6xl text-emerald-500 text-glow mb-4"></i>
+                <h1 class="text-3xl font-tech text-white mb-2">SISTEMA <span class="text-emerald-500">OPERATIVO</span></h1>
+                <p class="text-gray-400 font-data text-lg">Se requiere ser Staff</p>
+            </div>
+            
+            <input type="password" id="pass-input" class="pass-input mb-4" placeholder="••••••••">
+            
+            <p id="login-error" class="text-red-500 font-data text-sm mb-4 hidden tracking-wider">ACCESO DENEGADO</p>
+            
+            <button onclick="verificarClave()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-tech py-3 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)]">
+                INICIAR SESIÓN
+            </button>
+        </div>
+    </div>
+
+    <div id="main-app" class="flex h-screen w-full opacity-0 pointer-events-none transition-opacity duration-1000">
+        
+        <aside class="w-72 glass-panel border-r border-gray-800 flex flex-col z-10">
+            <div class="p-6 border-b border-gray-800">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-shield-halved text-2xl text-emerald-500 text-glow"></i>
+                    <h2 class="text-2xl font-tech font-bold text-white tracking-widest">STAFF<span class="text-emerald-500">MineYupi</span></h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-data text-gray-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    SISTEMA EN LÍNEA
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+                <div class="text-xs font-tech text-gray-500 mb-2 mt-4 px-2">GENERAL</div>
+                <button class="nav-btn active" onclick="cambiarSeccion('inicio', this)">
+                    <i class="fa-solid fa-house w-6 text-center"></i> Panel Central
+                </button>
+                <button class="nav-btn" onclick="cambiarSeccion('info', this)">
+                    <i class="fa-solid fa-database w-6 text-center"></i> Info General
+                </button>
+                <button class="nav-btn" onclick="cambiarSeccion('mods', this)">
+                    <i class="fa-solid fa-plug-circle-xmark w-6 text-center"></i> Mods & Macros
+                </button>
+
+                <div class="text-xs font-tech text-gray-500 mb-2 mt-6 px-2">OPERACIONES</div>
+                <button class="nav-btn" onclick="cambiarSeccion('sanciones', this)">
+                    <i class="fa-solid fa-gavel w-6 text-center"></i> Sanciones
+                </button>
+                <button class="nav-btn" onclick="cambiarSeccion('comandos', this)">
+                    <i class="fa-solid fa-terminal w-6 text-center"></i> Comandos
+                </button>
+
+                <div class="text-xs font-tech text-gray-500 mb-2 mt-6 px-2">EQUIPO</div>
+                <button class="nav-btn" onclick="cambiarSeccion('jerarquia', this)">
+                    <i class="fa-solid fa-sitemap w-6 text-center"></i> Jerarquía
+                </button>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-8 lg:p-12 relative z-0">
+            
+            <section id="inicio" class="content-section active max-w-6xl mx-auto">
+                <div class="glass-panel p-10 rounded-2xl border-l-4 border-emerald-500 mb-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <i class="fa-solid fa-globe text-9xl"></i>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-tech text-white mb-4">BIENVENIDO A <br><span class="text-emerald-500">LA GUIA DEL STAFF</span></h1>
+                    <p class="text-xl font-data text-gray-300 max-w-2xl mb-6">Pagina oficial de MineYupi (Creador: Winter_gz).</p>
+                    <div class="inline-flex items-center gap-3 bg-gray-900/80 px-4 py-2 rounded-lg border border-gray-700">
+                        <i class="fa-solid fa-lock text-emerald-500"></i>
+                        <span class="font-data text-gray-300">Aprendizaje seguro</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-panel p-6 rounded-xl border border-gray-800">
+                        <i class="fa-solid fa-bolt text-3xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-lg font-tech text-white mb-2">Acción Rápida</h3>
+                        <p class="text-sm text-gray-400">Consulta los comandos administrativos y tiempos de sanción al instante.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border border-gray-800">
+                        <i class="fa-solid fa-magnifying-glass text-3xl text-blue-500 mb-4"></i>
+                        <h3 class="text-lg font-tech text-white mb-2">Revisiones (SS)</h3>
+                        <p class="text-sm text-gray-400">Identifica clientes inyectables y modificaciones ilegales ocultas.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-xl border border-gray-800">
+                        <i class="fa-solid fa-scale-balanced text-3xl text-purple-500 mb-4"></i>
+                        <h3 class="text-lg font-tech text-white mb-2">Justicia</h3>
+                        <p class="text-sm text-gray-400">Aplica la normativa de manera objetiva respetando la tabla de strikes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="info" class="content-section max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-tech text-white mb-2">INFORMACIÓN <span class="text-emerald-500">GENERAL</span></h2>
+                    <p class="text-gray-400 font-data text-lg">Informacion sobre clientes y modificaciones ilegales.</p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="glass-panel p-8 rounded-xl glow-border-emerald relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10"><i class="fa-solid fa-ghost text-9xl"></i></div>
+                        <h3 class="text-2xl font-tech text-emerald-400 mb-4 flex items-center gap-3">
+                            <i class="fa-solid fa-ghost"></i> Ghost Client
+                        </h3>
+                        <p class="text-gray-300 mb-4">Software inyectable o modificable diseñado para ocultarse en revisiones (ScreenShares). Otorgan ventajas sutiles para que el usuario parezca legítimo.</p>
+                        <div class="space-y-2 font-data text-sm">
+                            <p><strong class="text-emerald-500">> Ghost Client:</strong> Vape V4, Vape Lite, Entropy, Drip Lite, Dream Client, Dream Advanced, Whiteout, Koid, Kryptonite, entre muchos mas.</p>
+                            <p><strong class="text-emerald-500">> Inyectable:</strong> Vape V4, Vape Lite, Entropy, Drip Lite, Whiteout, Kryptonite, Slinky, Dope Client, Phantom Client, Carbon Ghost y Shadow Client.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl glow-border-red relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10"><i class="fa-solid fa-skull text-9xl"></i></div>
+                        <h3 class="text-2xl font-tech text-red-400 mb-4 flex items-center gap-3">
+                            <i class="fa-solid fa-skull"></i> Hacked Client (Blatant)
+                        </h3>
+                        <p class="text-gray-300 mb-4">Clientes con interfaz gráfica (GUI) evidente. Son fáciles de detectar in-game porque sus ventajas rompen fuertemente el comportamiento normal.</p>
+                        <div class="space-y-2 font-data text-sm">
+                            <p><strong class="text-red-400">> Hacks Client:</strong> Wurst, Meteor Client, Impact, LiquidBounce, Aristois, Inertia, Sigma, Flux, Tenacity, Rise y demas.</p>
+                            <p><strong class="text-red-400">> Detección:</strong> Sanción directa in-game si la evidencia en video es irrefutable. No requieren SS.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition-colors">
+                        <h3 class="text-xl font-tech text-blue-400 mb-3"><i class="fa-solid fa-water mr-2"></i> Flood</h3>
+                        <p class="text-sm text-gray-300 mb-3">Envío masivo de mensajes o caracteres en un periodo corto de tiempo, saturando el chat y dificultando la lectura para otros usuarios.</p>
+                        <p class="text-xs font-data text-gray-400 bg-gray-900/50 p-2 rounded">Ejemplo: Repetición de caracteres, mensajes largos o comandos seguidos.</p>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors">
+                        <h3 class="text-xl font-tech text-purple-400 mb-3"><i class="fa-solid fa-bullhorn mr-2"></i> Spam</h3>
+                        <p class="text-sm text-gray-300 mb-3">Promoción no autorizada de servidores, servicios externos o productos. Incluye el uso repetitivo de mensajes con fines publicitarios.</p>
+                        <p class="text-xs font-data text-gray-400 bg-gray-900/50 p-2 rounded">Ejemplo: Publicidad IP, enlaces externos (links) o venta de servicios.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mods" class="content-section max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-tech text-white mb-2">MODS & <span class="text-orange-500">MACROS</span></h2>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl mb-8">
+                    <h3 class="text-xl font-tech text-emerald-400 mb-3 border-b border-gray-700 pb-2">MODS ILEGALES</h3>
+                    <p class="text-sm text-gray-400 mb-6">Son modificaciones de cliente (Forge/Fabric) que alteran el funcionamiento natural del juego, proporcionando ventajas injustas en combate o exploración sobre jugadores en clientes legales.</p>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="mod-tag">Aim Assist</span><span class="mod-tag">Velocity</span><span class="mod-tag">Anti Knockback</span>
+                        <span class="mod-tag">Hitbox Expander</span><span class="mod-tag">Freecam</span><span class="mod-tag">X-Ray</span>
+                        <span class="mod-tag">Player Radar</span><span class="mod-tag">No Hurt Cam</span><span class="mod-tag">Auto Totem</span>
+                        <span class="mod-tag">KillAura</span><span class="mod-tag">AimBot</span><span class="mod-tag">Criticals</span>
+                        <span class="mod-tag">NoJumpDelay</span><span class="mod-tag">Totem Helper</span><span class="mod-tag">Fast Totem</span>
+                        <span class="mod-tag">Accurate Block Placement</span><span class="mod-tag">Attack Through Grass</span>
+                        <span class="mod-tag">FireRocketKey</span><span class="mod-tag">Auto Attack</span><span class="mod-tag">Auto Clicker</span>
+                        <span class="mod-tag">Aldeano invisible</span><span class="mod-tag">Cowedfast</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl">
+                    <h3 class="text-xl font-tech text-orange-400 mb-3 border-b border-gray-700 pb-2">MACROS & AUTOMATIZACIÓN</h3>
+                    <p class="text-sm text-gray-400 mb-6">Son secuencias de comandos o acciones automatizadas (tanto en software de periféricos como externos) que ejecutan comandos o acciones de click sin intervención humana real.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-data">
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">1.</span> Auto-Clicker de Software</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">2.</span> Macros Periféricos (Logitech/Razer)</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">3.</span> Toggle Sprint Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">4.</span> Fast-Bridge Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">5.</span> Pot-PvP Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">6.</span> Spam Macro (Chat)</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">7.</span> Strafe Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">8.</span> Combo Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">9.</span> Inventory Cleaner Macro</div>
+                        <div class="bg-gray-900/50 p-4 border border-gray-800 rounded-lg"><span class="text-orange-500 font-bold">10.</span> Fishing Macro</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sanciones" class="content-section max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-tech text-white mb-2">GUÍA DE <span class="text-red-500">SANCIONES</span></h2>
+                    <p class="text-gray-400 font-data text-lg">Tiempos de penalización.</p>
+                </div>
+
+                <div class="glass-panel rounded-xl overflow-hidden mb-8">
+                    <div class="bg-gray-900 py-3 px-6 border-b border-gray-800 font-tech text-emerald-500 font-bold tracking-wide">
+                        BANEOS
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm font-data">
+                            <thead class="bg-gray-800/50 text-gray-400">
+                                <tr>
+                                    <th class="px-6 py-4">Razón</th>
+                                    <th class="px-6 py-4">Falta #1</th>
+                                    <th class="px-6 py-4">Falta #2</th>
+                                    <th class="px-6 py-4">Falta #3+</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Hacks Blatant</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">10 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">20 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">30 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Hacks in SS</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">15 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">30 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">45 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Hacks Admitidos</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">5 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">15 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">25 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Complice de Hacker</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">10 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">20 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">30 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Ban Evading</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">15 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">20 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">25 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Refusal To SS</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">10 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">20 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">30 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Uso De Mods Ilegales</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">5 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">10 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">15 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Bug Abuse</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">1 Día</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">5 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">10 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Estafa</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">3 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">10 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">15 Días</span></td></tr>
+                                <tr class="bg-red-900/20 border-t border-red-500/30">
+                                    <td class="px-6 py-4 font-bold text-red-400">Dupe / Doxing / DDoS</td>
+                                    <td colspan="3" class="px-6 py-4 text-center"><span class="badge bg-red-600 text-white shadow-[0_0_10px_#ef4444] animate-pulse">PERMANENTE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <div class="bg-gray-900 py-3 px-6 border-b border-gray-800 font-tech text-blue-400 font-bold tracking-wide">
+                        INFRACCIONES DE CHAT
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm font-data">
+                            <thead class="bg-gray-800/50 text-gray-400">
+                                <tr>
+                                    <th class="px-6 py-4">Razón</th>
+                                    <th class="px-6 py-4">Falta #1</th>
+                                    <th class="px-6 py-4">Falta #2</th>
+                                    <th class="px-6 py-4">Falta #3+</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Flood / Spam</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Warn</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 15m</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 30m</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Lenguaje Ofensivo / +18</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 30m</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 1h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 3h</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Insultos al Servidor</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 1h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 3h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">Mute 6h</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Staff Disrespect</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 1h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 2h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">Mute 4h</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Pasar IPs Otros Servers</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 1 Día</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 3 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">Mute 7 Días</span></td></tr>
+                                <tr class="table-row-hover"><td class="px-6 py-3 font-bold text-white">Amenaza DDoS / Doxing</td>
+                                    <td class="px-6 py-3"><span class="badge bg-gray-800 text-gray-300">Mute 12h</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-orange-500/20 text-orange-400 border border-orange-500/30">Mute 3 Días</span></td>
+                                    <td class="px-6 py-3"><span class="badge bg-red-500/20 text-red-400 border border-red-500/30">Mute 7 Días</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comandos" class="content-section max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-tech text-white mb-2">TERMINAL DE <span class="text-emerald-500">COMANDOS</span></h2>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl font-data">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <code class="block bg-gray-950 border border-emerald-500/30 text-emerald-400 p-2 rounded mb-1 text-sm">/ban &lt;user&gt; &lt;tiempo&gt; &lt;razón&gt;</code>
+                            <p class="text-sm text-gray-400">Suspensión temporal según la tabla de sanciones.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-emerald-500/30 text-emerald-400 p-2 rounded mb-1 text-sm">/ban &lt;user&gt; &lt;razón&gt;</code>
+                            <p class="text-sm text-gray-400">Baneo permanente del servidor.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-yellow-500/30 text-yellow-400 p-2 rounded mb-1 text-sm">/mute &lt;user&gt; &lt;tiempo&gt; &lt;razón&gt;</code>
+                            <p class="text-sm text-gray-400">Silencia a un jugador en el chat (Ej: 12h, 3d).</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-blue-500/30 text-blue-400 p-2 rounded mb-1 text-sm">/freeze &lt;user&gt;</code>
+                            <p class="text-sm text-gray-400">Inicia protocolo de ScreenShare congelando al jugador.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-purple-500/30 text-purple-400 p-2 rounded mb-1 text-sm">/Vanish</code>
+                            <p class="text-sm text-gray-400">Te hace invisible para todos menos los staffs.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-purple-500/30 text-purple-400 p-2 rounded mb-1 text-sm">/tp &lt;user&gt; | /tphere &lt;user&gt;</code>
+                            <p class="text-sm text-gray-400">Teletransportación hacia o traer a un jugador.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-gray-500/30 text-gray-400 p-2 rounded mb-1 text-sm">/Warn &lt;user&gt; &lt;razón&gt;</code>
+                            <p class="text-sm text-gray-400">Advierte a un usuario sobre su comportamiento.</p>
+                        </div>
+                        <div>
+                            <code class="block bg-gray-950 border border-emerald-500/30 text-emerald-400 p-2 rounded mb-1 text-sm shadow-[0_0_10px_rgba(16,185,129,0.2)]">/Staff</code>
+                            <p class="text-sm text-gray-400">Te pone en modo staff dando acceso a herramientas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="jerarquia" class="content-section max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-tech text-white mb-2">ESTRUCTURA <span class="text-purple-500">JERÁRQUICA</span></h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 rounded-xl border-t-4 border-red-500 flex gap-5">
+                        <div class="mt-1"><div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/50"><i class="fa-solid fa-crown text-xl"></i></div></div>
+                        <div>
+                            <h3 class="text-xl font-tech text-white mb-1">Administración</h3>
+                            <p class="text-xs font-tech text-red-400 mb-2">Manager • Operador • Owner • Founder</p>
+                            <p class="text-sm text-gray-400 font-data">Se dedican a enseñar a todo el staff, capacitan y observan a todo el staff. Son encargados de solucionar problemas de mayor grado y apoyar constantemente al server.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-xl border-t-4 border-purple-500 flex gap-5">
+                        <div class="mt-1"><div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-500 border border-purple-500/50"><i class="fa-solid fa-shield text-xl"></i></div></div>
+                        <div>
+                            <h3 class="text-xl font-tech text-white mb-1">Head Staff</h3>
+                            <p class="text-xs font-tech text-purple-400 mb-2">JrAdmin • Admin • SrAdmin • Coordinador</p>
+                            <p class="text-sm text-gray-400 font-data">Se dedican a la Supervisión del equipo de moderación. Encargados de gestionar derivaciones complejas.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-xl border-t-4 border-blue-500 flex gap-5">
+                        <div class="mt-1"><div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 border border-blue-500/50"><i class="fa-solid fa-eye text-xl"></i></div></div>
+                        <div>
+                            <h3 class="text-xl font-tech text-white mb-1">Medium Staff</h3>
+                            <p class="text-xs font-tech text-blue-400 mb-2">Mod • SrMod</p>
+                            <p class="text-sm text-gray-400 font-data">Se Dedican a darle bienvenidas a los Low Staff, enseñarles como funciona el discord y comandos, mantienen una moderacion activa en minecraft y discord.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-xl border-t-4 border-emerald-500 flex gap-5">
+                        <div class="mt-1"><div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 border border-emerald-500/50"><i class="fa-solid fa-handshake-angle text-xl"></i></div></div>
+                        <div>
+                            <h3 class="text-xl font-tech text-white mb-1">Low Staff</h3>
+                            <p class="text-xs font-tech text-emerald-400 mb-2">T-Helper • Helper • T-Mod</p>
+                            <p class="text-sm text-gray-400 font-data">Soporte básico, resolución de dudas de usuarios y muteos por toxicidad/spam, al igual que responder tickets. T-Mod son los unicos que puede banear de los Low Staff.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Logica de Login
+        function verificarClave() {
+            const clave = document.getElementById('pass-input').value;
+            const error = document.getElementById('login-error');
+            const loginScreen = document.getElementById('login-screen');
+            const mainApp = document.getElementById('main-app');
+
+            if (clave === "Staff2026") {
+                // Ocultar login
+                loginScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loginScreen.style.visibility = 'hidden';
+                    // Mostrar App principal
+                    mainApp.classList.remove('opacity-0', 'pointer-events-none');
+                }, 500);
+            } else {
+                error.classList.remove('hidden');
+                document.getElementById('pass-input').value = "";
+                // Efecto shake simple
+                document.querySelector('.login-box').style.transform = 'translateX(-10px)';
+                setTimeout(() => document.querySelector('.login-box').style.transform = 'translateX(10px)', 50);
+                setTimeout(() => document.querySelector('.login-box').style.transform = 'translateX(0)', 100);
+            }
+        }
+
+        // Soporte para Enter
+        document.getElementById('pass-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') verificarClave();
+        });
+
+        // Navegación Sidebar
+        function cambiarSeccion(id, btn) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            // Quitar clase activa de todos los botones
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            // Mostrar la nueva y activar boton
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
